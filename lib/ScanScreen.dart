@@ -1,7 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart'; 
+import 'PaymentScreen.dart';
+import 'utils.dart';
 
-class ScanScreen extends StatelessWidget {
+class ScanScreen extends StatefulWidget {
   const ScanScreen({super.key});
+
+  @override
+  State<ScanScreen> createState() => _ScanScreenState();
+}
+
+class _ScanScreenState extends State<ScanScreen> {
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  QRViewController? controller;
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
+
+  void _onQRViewCreated(QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((scanData) {
+      controller.pauseCamera(); // Prevent multiple scans
+      _handleScannedCode(scanData.code ?? '');
+    });
+  }
+
+ void _handleScannedCode(String code) async {
+  controller?.pauseCamera(); // Stop scanning
+
+  final userId = await getUserId(); // Get or generate local user ID
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PaymentScreen(
+        userId: userId,
+        garderobe: code,
+      ),
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -10,8 +52,18 @@ class ScanScreen extends StatelessWidget {
         title: const Text('Scan QR Code'),
         backgroundColor: Colors.deepOrange,
       ),
-      body: const Center(
-        child: Text('Scan screen content goes here'),
+      body: Center(
+        child: QRView(
+          key: qrKey,
+          onQRViewCreated: _onQRViewCreated,
+          overlay: QrScannerOverlayShape(
+            borderColor: Colors.deepOrange,
+            borderRadius: 10,
+            borderLength: 30,
+            borderWidth: 8,
+            cutOutSize: 250,
+          ),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0, // Optional: mark Home as selected
@@ -19,9 +71,7 @@ class ScanScreen extends StatelessWidget {
           if (index == 0) {
             Navigator.pop(context); // Go back to Home
           } else if (index == 1) {
-            // Navigate to My Tickets screen
             Navigator.popUntil(context, (route) => route.isFirst);
-            // You could then switch tab externally if needed
           }
         },
         selectedItemColor: Colors.black54,
@@ -40,8 +90,3 @@ class ScanScreen extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
