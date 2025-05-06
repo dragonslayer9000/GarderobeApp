@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'HomeScreen.dart';
 import 'MyTicketsScreen.dart';
-import 'ScanScreen.dart';
-import 'ConfirmationScreen.dart';
 
+final GlobalKey<_MainNavigationState> navKey = GlobalKey<_MainNavigationState>();
 
 void main() {
   runApp(const GarderobeApp());
@@ -17,14 +16,13 @@ class GarderobeApp extends StatelessWidget {
     return MaterialApp(
       title: 'Garderobe App',
       theme: ThemeData(primarySwatch: Colors.deepOrange),
-      home: const MainNavigation(),
-
+      home: MainNavigation(key: navKey), // <-- use the global key here
     );
   }
 }
 
 class MainNavigation extends StatefulWidget {
-  const MainNavigation({super.key});
+  const MainNavigation({Key? key}) : super(key: key);
 
   @override
   State<MainNavigation> createState() => _MainNavigationState();
@@ -33,15 +31,19 @@ class MainNavigation extends StatefulWidget {
 class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
 
-  // Screens for each tab
   final List<Widget> _screens = [
     const HomeScreen(),
     const MyTicketsScreen(),
-    const ScanScreen(),
-    const Confirmationscreen()
   ];
 
   void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  // This allows external screens to switch tabs
+  void switchTab(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -54,8 +56,8 @@ class _MainNavigationState extends State<MainNavigation> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.black, // Selected icon and label color
-        unselectedItemColor: Colors.black54, // Unselected icon color
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.black54,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -70,4 +72,3 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 }
-

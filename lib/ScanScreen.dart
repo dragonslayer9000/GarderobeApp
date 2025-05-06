@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart'; 
 import 'PaymentScreen.dart';
 import 'utils.dart';
+import 'main.dart';
 
 class ScanScreen extends StatefulWidget {
   const ScanScreen({super.key});
@@ -28,22 +29,26 @@ class _ScanScreenState extends State<ScanScreen> {
     });
   }
 
- void _handleScannedCode(String code) async {
-  controller?.pauseCamera(); // Stop scanning
+  void _handleScannedCode(String code) async {
+  if (code.trim() == 'Garderobe 1') {
+    final userId = await getUserId(); // Get or generate local user ID
 
-  final userId = await getUserId(); // Get or generate local user ID
-
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => PaymentScreen(
-        userId: userId,
-        garderobe: code,
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaymentScreen(
+          userId: userId,
+          garderobe: code,
+        ),
       ),
-    ),
-  );
+    );
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Invalid QR code')),
+    );
+    controller?.resumeCamera(); // Resume scanning if code is not valid
+  }
 }
-
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +74,11 @@ class _ScanScreenState extends State<ScanScreen> {
         currentIndex: 0, // Optional: mark Home as selected
         onTap: (index) {
           if (index == 0) {
-            Navigator.pop(context); // Go back to Home
+            Navigator.popUntil(context, (route) => route.isFirst); // Go to Home
           } else if (index == 1) {
-            Navigator.popUntil(context, (route) => route.isFirst);
-          }
+            Navigator.popUntil(context, (route) => route.isFirst); // Reset stack
+            navKey.currentState?.switchTab(1); // Switch to My Tickets tab
+         }
         },
         selectedItemColor: Colors.black54,
         unselectedItemColor: Colors.black54,

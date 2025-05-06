@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:garderobe_app/PickUpScreen.dart';
 import 'ScanScreen.dart';
 
 
@@ -59,7 +60,12 @@ class HomeScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(30),
               ),
             ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const PickUpScreen()),
+                );
+              },
               child: const Text('Pick up jacket',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             ),

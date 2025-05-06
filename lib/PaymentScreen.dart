@@ -68,7 +68,6 @@ Future<int?> findLowestAvailableNumber() async {
   }
 }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
