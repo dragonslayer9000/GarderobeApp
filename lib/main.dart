@@ -13,6 +13,7 @@ class GarderobeApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('App started successfully');
     return MaterialApp(
       title: 'Garderobe App',
       theme: ThemeData(primarySwatch: Colors.deepOrange),

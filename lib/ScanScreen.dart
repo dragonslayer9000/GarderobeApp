@@ -14,6 +14,7 @@ class ScanScreen extends StatefulWidget {
 class _ScanScreenState extends State<ScanScreen> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
+  bool _isNavigating = false; // Prevent multiple scans
 
   @override
   void dispose() {
@@ -24,15 +25,21 @@ class _ScanScreenState extends State<ScanScreen> {
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
-      controller.pauseCamera(); // Prevent multiple scans
       _handleScannedCode(scanData.code ?? '');
     });
   }
 
   void _handleScannedCode(String code) async {
+    if (_isNavigating) return;
+    _isNavigating = true;
+
+
   if (code.trim() == 'Garderobe 1') {
+    controller?.pauseCamera();
     final userId = await getUserId(); // Get or generate local user ID
 
+
+    if (!mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -41,14 +48,19 @@ class _ScanScreenState extends State<ScanScreen> {
           garderobe: code,
         ),
       ),
-    );
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Invalid QR code')),
-    );
-    controller?.resumeCamera(); // Resume scanning if code is not valid
+    ).then((_) {
+        _isNavigating = false;
+        controller?.resumeCamera(); // Resume scanning after returning
+      });
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid QR code')),
+      );
+      controller?.resumeCamera();
+      _isNavigating = false;
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
