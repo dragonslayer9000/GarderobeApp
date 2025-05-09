@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'HomeScreen.dart';
 import 'MyTicketsScreen.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
 
 final GlobalKey<_MainNavigationState> navKey = GlobalKey<_MainNavigationState>();
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Required for async main
+  await initializeDateFormatting('da_DK', null); //  Init Danish locale
   runApp(const GarderobeApp());
 }
+
 
 class GarderobeApp extends StatelessWidget {
   const GarderobeApp({super.key});
