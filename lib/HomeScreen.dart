@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garderobe_app/PickUpScreen.dart';
+import 'package:garderobe_app/MyTicketsScreen.dart';
 import 'ScanScreen.dart';
 
 
@@ -63,7 +63,7 @@ class HomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const PickUpScreen()),
+                MaterialPageRoute(builder: (context) => const MyTicketsScreen()),
                 );
               },
               child: const Text('Pick up jacket',
