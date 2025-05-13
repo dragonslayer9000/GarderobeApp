@@ -32,7 +32,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
 
     print('🔍 Loading tickets for user ID: $userId');
 
-    final url = Uri.parse('$baseUrl/api/collections/tickets/records');
+    final url = Uri.parse('$baseUrl/api/collections/tickets/records?filter=user_id="$id"');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
